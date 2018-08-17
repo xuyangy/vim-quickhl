@@ -200,7 +200,7 @@ function! quickhl#manual#this_whole_classish_bigword() "{{{
   let word = expand('<cword>')
   if word == '' | return | endif
   let bigword = expand('<cWORD>')
-  let matched = matchstr(bigword, '\(\w\+\([.$]\)\?\)*'.word.'\([.$]\w\+\)*')
+  let matched = matchstr(bigword, '\(\w\+\([.$-]\)\?\)*'.word.'\([.$-]\w\+\)*')
   let escaped_classish_word = quickhl#escape(matched)
   let pattern = '\<'.escaped_classish_word.'\>'
   if s:manual.index_of(pattern) == -1
@@ -216,7 +216,7 @@ function! quickhl#manual#this_classish_bigword() "{{{
   let word = expand('<cword>')
   if word == '' | return | endif
   let bigword = expand('<cWORD>')
-  let pattern = matchstr(bigword, '\(\w\+\([.$]\)\?\)*'.word.'\([.$]\w\+\)*')
+  let pattern = matchstr(bigword, '\(\w\+\([.$-]\)\?\)*'.word.'\([.$-]\w\+\)*')
   call quickhl#manual#add_or_del(pattern)
 endfunction "}}}
 
