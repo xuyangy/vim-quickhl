@@ -88,6 +88,9 @@ endfunction "}}}
 
 function! s:manual.refresh() "{{{
   call self.clear()
+  if &buftype !=# '' || &previewwindow
+    return
+  endif
   if self.locked || ( exists("w:quickhl_manual_lock") && w:quickhl_manual_lock )
     return
   endif
@@ -317,7 +320,7 @@ function! quickhl#manual#enable() "{{{
 
   augroup QuickhlManual
     autocmd!
-    autocmd VimEnter,WinEnter * call quickhl#manual#refresh()
+    autocmd VimEnter,WinEnter * call quickhl#manual#refresh_current()
     autocmd! ColorScheme * call quickhl#manual#init_highlight()
   augroup END
   call quickhl#manual#init_highlight()
@@ -333,8 +336,16 @@ function! quickhl#manual#disable() "{{{
   call quickhl#manual#reset()
 endfunction "}}}
 
-function! quickhl#manual#refresh() "{{{
+function! quickhl#manual#refresh_current() "{{{
+  call s:manual.refresh()
+endfunction "}}}
+
+function! quickhl#manual#refresh_all() "{{{
   call quickhl#windo(s:manual.refresh, s:manual)
+endfunction "}}}
+
+function! quickhl#manual#refresh() "{{{
+  call quickhl#manual#refresh_all()
 endfunction "}}}
 
 function! quickhl#manual#status() "{{{

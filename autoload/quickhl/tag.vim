@@ -27,6 +27,9 @@ endfunction "}}}
 function! s:tag.refresh() "{{{
   " only enable on normal(&buftype is empty) buffer.
   call self.clear()
+  if &previewwindow
+    return
+  endif
   if !empty(&buftype) | return | endif
   if !self.enable | return | endif
   call self.set()
@@ -40,7 +43,7 @@ function! quickhl#tag#enable() "{{{
   let s:tag.enable = 1
   augroup QuickhlTag
     autocmd!
-    autocmd! BufEnter,WinEnter * call quickhl#tag#refresh()
+    autocmd BufEnter,WinEnter * call quickhl#tag#refresh_current()
     autocmd! ColorScheme * call quickhl#tag#init_highlight()
   augroup END
   call quickhl#tag#init_highlight()
@@ -65,8 +68,16 @@ function! quickhl#tag#toggle() "{{{
   endif
 endfunction "}}}
 
-function! quickhl#tag#refresh() "{{{
+function! quickhl#tag#refresh_current() "{{{
+  call s:tag.refresh()
+endfunction "}}}
+
+function! quickhl#tag#refresh_all() "{{{
   call quickhl#windo(s:tag.refresh, s:tag)
+endfunction "}}}
+
+function! quickhl#tag#refresh() "{{{
+  call quickhl#tag#refresh_all()
 endfunction "}}}
 
 call s:tag.init()
