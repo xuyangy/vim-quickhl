@@ -75,8 +75,28 @@ nnoremap <silent> <Plug>(quickhl-manual-clear)  :call quickhl#manual#clear_this(
 vnoremap <silent> <Plug>(quickhl-manual-clear)  :call quickhl#manual#clear_this('v')<CR>
 nnoremap <silent> <Plug>(quickhl-manual-toggle) :call quickhl#manual#lock_toggle()<CR>
 vnoremap <silent> <Plug>(quickhl-manual-toggle) :call quickhl#manual#lock_toggle()<CR>
-nnoremap <silent> <Plug>(quickhl-manual-next)   :call quickhl#manual#next('s')<CR>
-nnoremap <silent> <Plug>(quickhl-manual-prev)   :call quickhl#manual#prev('s')<CR>
+nnoremap <silent> <Plug>(quickhl-manual-next)   :<C-u>call <SID>QuickhlManualNextRepeatable(v:count1)<CR>
+nnoremap <silent> <Plug>(quickhl-manual-prev)   :<C-u>call <SID>QuickhlManualPrevRepeatable(v:count1)<CR>
+
+" dot-repeatable next/prev wrappers
+function! s:QuickhlManualNextRepeatable(count) abort
+  let l:cnt = a:count
+  while l:cnt > 0
+    call quickhl#manual#next('s')
+    let l:cnt -= 1
+  endwhile
+  " Register this action for dot-repeat using repeat.vim if available
+  silent! call repeat#set("\<Plug>(quickhl-manual-next)", a:count)
+endfunction
+
+function! s:QuickhlManualPrevRepeatable(count) abort
+  let l:cnt = a:count
+  while l:cnt > 0
+    call quickhl#manual#prev('s')
+    let l:cnt -= 1
+  endwhile
+  silent! call repeat#set("\<Plug>(quickhl-manual-prev)", a:count)
+endfunction
 
 nnoremap <silent> <Plug>(quickhl-cword-toggle)  :call quickhl#cword#toggle()<CR>
 nnoremap <silent> <Plug>(quickhl-cword-enable)  :call quickhl#cword#enable()<CR>
