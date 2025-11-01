@@ -423,7 +423,83 @@ function! quickhl#manual#prev(...) "{{{
   call s:manual.search("b" . flags)
 endfunction "}}}
 
-function! quickhl#manual#this_motion(motion_wise) " {{{
+function! quickhl#manual#next_this(...) "{{{
+  let flags = ""
+  if a:0 == 1
+    let flags = a:1
+  endif
+  " Detect if cursor is on any active quickhl pattern
+  let l:line = getline('.')
+  let l:curcol0 = col('.') - 1
+  let l:found_pattern = ''
+  for l:idx in range(len(s:manual.colors))
+    let l:pat = s:manual.colors[l:idx].pattern
+    if empty(l:pat) | continue | endif
+    let l:pos = 0
+    while 1
+      let [l:m, l:ms, l:me] = matchstrpos(l:line, l:pat, l:pos)
+      if l:ms == -1 | break | endif
+      if l:me == l:ms
+        let l:pos = l:pos + 1
+        continue
+      endif
+      if l:ms <= l:curcol0 && l:curcol0 < l:me
+        let l:found_pattern = l:pat
+        break
+      endif
+      let l:pos = l:me
+    endwhile
+    if !empty(l:found_pattern)
+      break
+    endif
+  endfor
+  if empty(l:found_pattern)
+    " Not on highlighted pattern: jump to next highlight across all patterns
+    call s:manual.search("w" . flags)
+    return
+  endif
+  call search(l:found_pattern, "w" . flags)
+endfunction "}}}
+
+function! quickhl#manual#prev_this(...) "{{{
+  let flags = ""
+  if a:0 == 1
+    let flags = a:1
+  endif
+  " Detect if cursor is on any active quickhl pattern
+  let l:line = getline('.')
+  let l:curcol0 = col('.') - 1
+  let l:found_pattern = ''
+  for l:idx in range(len(s:manual.colors))
+    let l:pat = s:manual.colors[l:idx].pattern
+    if empty(l:pat) | continue | endif
+    let l:pos = 0
+    while 1
+      let [l:m, l:ms, l:me] = matchstrpos(l:line, l:pat, l:pos)
+      if l:ms == -1 | break | endif
+      if l:me == l:ms
+        let l:pos = l:pos + 1
+        continue
+      endif
+      if l:ms <= l:curcol0 && l:curcol0 < l:me
+        let l:found_pattern = l:pat
+        break
+      endif
+      let l:pos = l:me
+    endwhile
+    if !empty(l:found_pattern)
+      break
+    endif
+  endfor
+  if empty(l:found_pattern)
+    " Not on highlighted pattern: jump to previous highlight across all patterns
+    call s:manual.search("bw" . flags)
+    return
+  endif
+  call search(l:found_pattern, "bw" . flags)
+endfunction "}}}
+
+function! quickhl#manual#this_motion(motion_wise) " {{
   let lnum_beg = line("'[")
   let lnum_end = line("']")
   for n in range(lnum_beg, lnum_end)

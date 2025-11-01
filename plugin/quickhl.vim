@@ -77,6 +77,8 @@ nnoremap <silent> <Plug>(quickhl-manual-toggle) :call quickhl#manual#lock_toggle
 vnoremap <silent> <Plug>(quickhl-manual-toggle) :call quickhl#manual#lock_toggle()<CR>
 nnoremap <silent> <Plug>(quickhl-manual-next)   :<C-u>call <SID>QuickhlManualNextRepeatable(v:count1)<CR>
 nnoremap <silent> <Plug>(quickhl-manual-prev)   :<C-u>call <SID>QuickhlManualPrevRepeatable(v:count1)<CR>
+nnoremap <silent> <Plug>(quickhl-manual-next-this)   :<C-u>call <SID>QuickhlManualNextThisRepeatable(v:count1)<CR>
+nnoremap <silent> <Plug>(quickhl-manual-prev-this)   :<C-u>call <SID>QuickhlManualPrevThisRepeatable(v:count1)<CR>
 
 " dot-repeatable next/prev wrappers
 function! s:QuickhlManualNextRepeatable(count) abort
@@ -96,6 +98,24 @@ function! s:QuickhlManualPrevRepeatable(count) abort
     let l:cnt -= 1
   endwhile
   silent! call repeat#set("\<Plug>(quickhl-manual-prev)", a:count)
+endfunction
+
+function! s:QuickhlManualNextThisRepeatable(count) abort
+  let l:cnt = a:count
+  while l:cnt > 0
+    call quickhl#manual#next_this('s')
+    let l:cnt -= 1
+  endwhile
+  silent! call repeat#set("\<Plug>(quickhl-manual-next-this)", a:count)
+endfunction
+
+function! s:QuickhlManualPrevThisRepeatable(count) abort
+  let l:cnt = a:count
+  while l:cnt > 0
+    call quickhl#manual#prev_this('s')
+    let l:cnt -= 1
+  endwhile
+    silent! call repeat#set("\<Plug>(quickhl-manual-prev-this)", a:count)
 endfunction
 
 nnoremap <silent> <Plug>(quickhl-cword-toggle)  :call quickhl#cword#toggle()<CR>
