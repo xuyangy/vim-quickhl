@@ -31,6 +31,9 @@ nmap <Space>b <Plug>(quickhl-manual-this-whole-classish-bigword)
 xmap <Space>m <Plug>(quickhl-manual-this)
 nmap <Space>M <Plug>(quickhl-manual-reset)
 xmap <Space>M <Plug>(quickhl-manual-reset)
+" Suggested mapping for clearing highlights under cursor
+nmap <Space>u <Plug>(quickhl-manual-clear)
+xmap <Space>u <Plug>(quickhl-manual-clear)
 
 nmap <Space>j <Plug>(quickhl-cword-toggle)
 nmap <Space>] <Plug>(quickhl-tag-toggle)
@@ -54,4 +57,9 @@ let g:quickhl_manual_colors = [
         \ "gui=bold ctermfg=7   ctermbg=5   guibg=#0070e0 guifg=#ffffff",
         \ "gui=bold ctermfg=7   ctermbg=16  guibg=#4c8f2f guifg=#ffffff",
         \ ]
+
+## Manual clear under cursor
+
+The plug mapping <Plug>(quickhl-manual-clear) clears all manual highlights whose regex matches cover the cursor position on the current line. If no highlight overlaps the cursor, it falls back to clearing the escaped <cword> or its word-boundary variant. Suggested mappings are included in the Full configuration above (e.g. <Space>u in normal/visual mode).
+
 ```

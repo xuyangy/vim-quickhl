@@ -234,6 +234,57 @@ function! quickhl#manual#this(mode) "{{{
   call quickhl#manual#add_or_del(pattern)
 endfunction "}}}
 
+function! quickhl#manual#clear_this(mode) " {{{
+  if !s:manual.enabled | call quickhl#manual#enable() | endif
+
+  " Try to clear any pattern that covers the exact cursor position on this line
+  let l:line = getline('.')
+  let l:curcol0 = col('.') - 1
+
+  let l:to_del = []
+  for l:idx in range(len(s:manual.colors))
+    let l:pat = s:manual.colors[l:idx].pattern
+    if empty(l:pat) | continue | endif
+    let l:pos = 0
+    while 1
+      let [l:m, l:ms, l:me] = matchstrpos(l:line, l:pat, l:pos)
+      if l:ms == -1 | break | endif
+      if l:me == l:ms
+        let l:pos = l:pos + 1
+        continue
+      endif
+      if l:ms <= l:curcol0 && l:curcol0 < l:me
+        call add(l:to_del, l:idx)
+        break
+      endif
+      let l:pos = l:me
+    endwhile
+  endfor
+
+  if !empty(l:to_del)
+    for l:idx in l:to_del
+      call s:manual.del_by_index(l:idx)
+    endfor
+    call quickhl#manual#refresh()
+    return
+  endif
+
+  " Fallback when none overlapped: previous behavior
+  let pattern =
+        \ a:mode == 'n' ? expand('<cword>') :
+        \ a:mode == 'v' ? quickhl#get_selected_text() :
+        \ ""
+  if pattern == '' | return | endif
+  let l:pattern_et = quickhl#escape(pattern)
+  let l:pattern_ew = '\<' . quickhl#escape(pattern) . '\>'
+  if s:manual.index_of(l:pattern_et) != -1
+    call s:manual.del(l:pattern_et, 1)
+  elseif s:manual.index_of(l:pattern_ew) != -1
+    call s:manual.del(l:pattern_ew, 1)
+  endif
+  call quickhl#manual#refresh()
+endfunction " }}}
+
 function! quickhl#manual#add_or_del(pattern) "{{{
   if !s:manual.enabled | call quickhl#manual#enable() | endif
   if s:manual.index_of(quickhl#escape(a:pattern)) == -1
